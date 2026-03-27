@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} - TechBlog</title>
+    <meta name="description" content="{description}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .article-header {
+            background: linear-gradient(135deg, #FF6B00, #FF9E00);
+            color: white;
+            padding: 6rem 0 3rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        
+        .article-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: slideInDown 1s ease;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            animation: slideInUp 1s ease 0.2s backwards;
+        }
+        
+        .article-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            animation: slideInUp 1s ease 0.4s backwards;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00C853;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .table-of-contents {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 3rem 0;
+            border-left: 4px solid #FF6B00;
+        }
+        
+        .toc-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2C3E50;
+        }
+        
+        .toc-list {
+            list-style: none;
+        }
+        
+        .toc-list li {
+            margin: 0.5rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .toc-list li:hover {
+            padding-left: 1rem;
+            color: #FF6B00;
+        }
+        
+        .toc-list a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .product-section {
+            padding: 4rem 0;
+        }
+        
+        .laptop-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            margin-bottom: 3rem;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .laptop-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+        }
+        
+        .laptop-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #FF6B00, #FF9E00);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .laptop-image {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .laptop-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        
+        .laptop-card:hover .laptop-image img {
+            transform: scale(1.1);
+        }
+        
+        .laptop-content {
+            padding: 2.5rem;
+        }
+        
+        .laptop-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stars {
+            color: #FFD700;
+            font-size: 1.3rem;
+        }
+        
+        .rating-score {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .rating-bar {
+            width: 100px;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .rating-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B00, #FF9E00);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .price-section {
+            margin-bottom: 2rem;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #00C853;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-note {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .spec-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #FF6B00;
+        }
+        
+        .spec-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .spec-value {
+            color: #2C3E50;
+            font-weight: 500;
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .pros, .cons {
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        
+        .pros {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+        }
+        
+        .cons {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+        }
+        
+        .pros h4, .cons h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pros h4 {
+            color: #155724;
+        }
+        
+        .cons h4 {
+            color: #721c24;
+        }
+        
+        .pros ul, .cons ul {
+            list-style: none;
+        }
+        
+        .pros li, .cons li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .pros li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .cons li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .ideal-for {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .ideal-for h4 {
+            color: #1565C0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #FF6B00, #FF9E00);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+        }
+        
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .article-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .article-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-fixed">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><i class="fas fa-laptop"></i> TechBlog</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#comparison">Comparativa</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#conclusion">Conclusión</a></li>
+                </ul>
+                <div class="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Article Header -->
+    <header class="article-header">
+        <div class="container">
+            <h1 class="article-title">{title_emoji} {title}</h1>
+            <div class="article-meta">
+                <span><i class="far fa-calendar"></i> {date}</span>
+                <span><i class="far fa-clock"></i> {reading_time} min de lectura</span>
+                <span><i class="far fa-user"></i> TechBlog Team</span>
+            </div>
+            <div class="article-stats">
+                <div class="stat-item">
+                    <span class="stat-number">{viewers_count}</span>
+                    <span class="stat-label">Leyendo ahora</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{monthly_readers}</span>
+                    <span class="stat-label">Lectores este mes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{article_rating}</span>
+                    <span class="stat-label">Rating del artículo</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Table of Contents -->
+    <section class="container">
+        <div class="table-of-contents">
+            <h3 class="toc-title">📋 Índice de Contenido</h3>
+            <ul class="toc-list">
+                {toc_items}
+            </ul>
+        </div>
+    </section>
+
+    <!-- Introduction -->
+    <section id="introduction" class="container">
+        <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 2rem; text-align: center;">📖 ¿Por qué esta guía es diferente?</h2>
+        <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
+            {introduction_text}
+        </p>
+        <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 2rem; border-radius: 12px; border-left: 4px solid #2196F3;">
+            <h4 style="color: #1565C0; margin-bottom: 1rem;">🔍 Nuestro Método de Análisis</h4>
+            <ul style="list-style: none; line-height: 1.8;">
+                {methodology_items}
+            </ul>
+        </div>
+    </section>
+
+    <!-- Product Reviews -->
+    <section id="products" class="product-section">
+        <div class="container">
+            {product_cards}
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section id="comparison" class="comparison-table-section">
+        <div class="container">
+            <div class="comparison-table">
+                <h2>📊 Tabla Comparativa Rápida</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                {comparison_headers}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {comparison_rows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <div class="container">
+            <div class="faq-container">
+                <h2 style="text-align: center; font-size: 2.5rem; font-weight: 700; margin-bottom: 3rem; color: #2C3E50;">❓ Preguntas Frecuentes</h2>
+                {faq_items}
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section id="conclusion" class="conclusion-section">
+        <div class="container">
+            <div class="conclusion-content">
+                <h2>🎯 Conclusión Final</h2>
+                <p>{conclusion_text}</p>
+                <p>
+                    ⏰ <strong>¡OFERTAS POR TIEMPO LIMITADO!</strong> {cta_text}
+                </p>
+                <div style="margin-top: 3rem;">
+                    <a href="{main_affiliate_link}" class="final-cta" target="_blank">
+                        🛒 VER TODAS LAS OFERTAS EN AMAZON
+                    </a>
+                </div>
+                <p style="margin-top: 2rem; opacity: 0.8;">
+                    {final_cta}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-laptop"></i> TechBlog</h3>
+                    <p>Tu fuente confiable de reviews tecnológicos honestos y detallados.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="#products">Productos</a></li>
+                        <li><a href="#comparison">Comparativa</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Política de Privacidad</a></li>
+                        <li><a href="#">Términos de Servicio</a></li>
+                        <li><a href="#">Política de Afiliados</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Suscríbete para recibir las últimas novedades</p>
+                    <form class="footer-form">
+                        <input type="email" placeholder="Tu email...">
+                        <button type="submit"><i class="fas fa-paper-place"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TechBlog. Todos los derechos reservados. Hecho con ❤️ para los amantes de la tecnología.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // FAQ Accordion
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                
+                question.addEventListener('click', function() {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all FAQ items
+                    faqItems.forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                    });
+                    
+                    // Open clicked item if it wasn't active
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+            
+            // Animate rating bars on scroll
+            const ratingBars = document.querySelectorAll('.rating-fill');
+            const ratingObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = width;
+                        }, 200);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            ratingBars.forEach(bar => ratingObserver.observe(bar));
+            
+            // Smooth scroll for TOC links
+            const tocLinks = document.querySelectorAll('.toc-list a');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
