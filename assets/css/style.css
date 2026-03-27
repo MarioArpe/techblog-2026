@@ -32,7 +32,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 40px;
 }
 
 /* ===== HEADER FIJO ===== */
@@ -605,7 +605,7 @@ body {
     .hero {
         flex-direction: column;
         text-align: center;
-        padding: 2rem 0;
+        padding: 2rem 20px;
     }
     
     .hero-content {
@@ -631,6 +631,14 @@ body {
     
     .footer-form button {
         width: 100%;
+    }
+    
+    .container {
+        padding: 0 20px;
+    }
+    
+    .nav-container {
+        padding: 0 20px;
     }
 }
 
