@@ -30,10 +30,7 @@ class TelegramPublisher:
         self.chat_id = TELEGRAM_CHANNEL
 
     def _build_caption(self, title: str, affiliate_link: str) -> str:
-        return f"🔥 {title}
-💰 Mejor precio hoy
-👉 {affiliate_link}
-#tecnologia #gadgets #ofertas"
+        return "🔥 {}\n💰 Mejor precio hoy\n👉 {}\n#tecnologia #gadgets #ofertas".format(title, affiliate_link)
 
     def publish_photo_with_text(self, image_path: str, title: str, affiliate_link: str) -> bool:
         caption = self._build_caption(title, affiliate_link)
@@ -60,6 +57,12 @@ class TelegramPublisher:
 def publish_product_to_telegram(image_path: str, title: str, affiliate_link: str) -> bool:
     publisher = TelegramPublisher()
     return publisher.publish_photo_with_text(image_path=image_path, title=title, affiliate_link=affiliate_link)
+
+
+def publish_product_video_sync(video_path: str, product_name: str, price: str, affiliate_link: str) -> bool:
+    publisher = TelegramPublisher()
+    caption = publisher._build_caption(product_name, affiliate_link)
+    return publisher.publish_photo(image_path=video_path, caption=caption)
 
 
 if __name__ == '__main__':
