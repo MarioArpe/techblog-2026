@@ -197,6 +197,44 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize theme toggle
     initThemeToggle();
+
+    // Share buttons handlers
+    function openShareWindow(url, width = 600, height = 400) {
+        const left = (screen.width / 2) - (width / 2);
+        const top = (screen.height / 2) - (height / 2);
+        window.open(url, 'shareWindow', `toolbar=0,status=0,resizable=1,width=${width},height=${height},top=${top},left=${left}`);
+    }
+
+    function handleShare(action) {
+        const title = document.title || '';
+        const url = window.location.href;
+
+        if (action === 'share' && navigator.share) {
+            navigator.share({ title, url }).catch(() => {});
+            return;
+        }
+
+        if (action === 'twitter') {
+            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+            openShareWindow(shareUrl);
+        } else if (action === 'facebook') {
+            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+            openShareWindow(shareUrl);
+        } else if (action === 'whatsapp') {
+            const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}`;
+            openShareWindow(shareUrl, 400, 700);
+        } else if (action === 'copy') {
+            navigator.clipboard.writeText(url).then(() => showNotification('Enlace copiado al portapapeles', 'success'))
+            .catch(() => showNotification('No se pudo copiar', 'error'));
+        }
+    }
+
+    document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.getAttribute('data-action');
+            handleShare(action);
+        });
+    });
     
     // Performance monitoring
     function trackPerformance() {

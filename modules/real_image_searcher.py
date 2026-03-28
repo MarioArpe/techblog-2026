@@ -9,7 +9,21 @@ from urllib.parse import quote
 
 class RealImageSearcher:
     """Buscador de imágenes reales de productos"""
-    
+
+    DEFAULT_PRODUCT_IMAGES = {
+        'lenovo': 'https://m.media-amazon.com/images/I/61QjTn8EIL._AC_SL1500_.jpg',
+        'hp': 'https://m.media-amazon.com/images/I/51KXqV8KIL._AC_SL1500_.jpg',
+        'asus': 'https://m.media-amazon.com/images/I/71n5l8y6GL._AC_SL1500_.jpg',
+        'dell': 'https://m.media-amazon.com/images/I/71k5E3eo5iL._AC_SL1500_.jpg',
+        'macbook': 'https://m.media-amazon.com/images/I/61mB7N4eKL._AC_SL1500_.jpg',
+        'iphone': 'https://m.media-amazon.com/images/I/61gB9N4eKL._AC_SL1500_.jpg',
+        'samsung': 'https://m.media-amazon.com/images/I/61B9N4eKL._AC_SL1500_.jpg',
+        'ipad': 'https://m.media-amazon.com/images/I/61N4eKL._AC_SL1500_.jpg',
+        'sony': 'https://m.media-amazon.com/images/I/61X47+N4XyL._AC_SL1500_.jpg',
+        'bose': 'https://m.media-amazon.com/images/I/51KXqV8KIL._AC_SL1500_.jpg',
+        'jbl': 'https://m.media-amazon.com/images/I/71n5l8y6GL._AC_SL1500_.jpg'
+    }
+
     def __init__(self):
         """Inicializa el buscador de imágenes"""
         self.logger = logging.getLogger(__name__)
@@ -63,7 +77,8 @@ class RealImageSearcher:
             
         except Exception as e:
             self.logger.error(f"❌ Error buscando imagen: {str(e)}")
-            return f"https://picsum.photos/800/600?random={hash(product_name)}"
+            fallback_image = self._get_generic_image(product_name)
+            return fallback_image
     
     def _search_amazon_image(self, product_name: str) -> str:
         """Busca imagen en Amazon.es"""
@@ -156,27 +171,38 @@ class RealImageSearcher:
         except Exception as e:
             self.logger.error(f"Error en DuckDuckGo: {str(e)}")
             return None
+
+    def _get_brand_from_product_name(self, product_name: str) -> str:
+        """Extrae la marca principal del nombre del producto"""
+        name_lower = product_name.lower()
+        for brand in self.DEFAULT_PRODUCT_IMAGES:
+            if brand in name_lower:
+                return brand
+        return None
     
     def _get_generic_image(self, product_name: str) -> str:
         """Genera imagen genérica pero específica del producto"""
-        # Mapeo de productos a imágenes genéricas
+        brand = self._get_brand_from_product_name(product_name)
+        if brand and brand in self.DEFAULT_PRODUCT_IMAGES:
+            return self.DEFAULT_PRODUCT_IMAGES[brand]
+
+        # Si no se detecta marca, intentar usar fallback por tipo de producto
         product_images = {
-            'laptop': 'https://images.unsplash.com/photo-15556036720-6bfc8cf77b78e1a7c4ed05773d0d/photo-16061178699-6e2bfc8cf77b78e1a7c4ed05773d0d',
-            'macbook': 'https://images.unsplash.com/photo-1541807023558-2f0f1b2fff8c0e35f4bb89f38d0b3/photo-1551807023558-2f0f1b2fff8c0e35f4bb89f38d0b3',
-            'iphone': 'https://images.unsplash.com/photo-1511707347099-5e8ad9b3b0cb44b88336697913/photo-1511707347099-5e8ad9b3b0cb44b88336697913',
-            'ipad': 'https://images.unsplash.com/photo-1544241025-c8c9a827c0e4e78d18d8a7f6e6d1a7c4ed05773d0d/photo-1544241025-c8c9a827c0e4e78d18d8a7f6e6d1a7c4ed05773d0d',
-            'samsung': 'https://images.unsplash.com/photo-1592843838274-2190a1f2b4b8cbbd9d4a5d4b8cbbd9d4a5d/photo-1592843838274-2190a1f2b4b8cbbd9d4a5d4b8cbbd9d4a5d',
-            'sony': 'https://images.unsplash.com/photo-1607147195360-a8c1d72c5b4b8cbbd9d4a5d4b8cbbd9d4a5d/photo-1607147195360-a8c1d72c5b4b8cbbd9d4a5d4b8cbbd9d4a5d'
+            'laptop': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
+            'macbook': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8',
+            'iphone': 'https://images.unsplash.com/photo-1542751110-97427bbecf20',
+            'ipad': 'https://images.unsplash.com/photo-1512499617640-c2f9992d2f9f',
+            'samsung': 'https://images.unsplash.com/photo-1510552776732-03e61cf4b144',
+            'sony': 'https://images.unsplash.com/photo-15193886887-2b8cf8cf77b7'
         }
-        
-        # Identificar tipo de producto
+
         product_type = self._identify_product_type(product_name)
-        
+
         if product_type in product_images:
             return product_images[product_type]
-        
-        # Si no se encuentra, usar imagen genérica de tecnología
-        return f"https://images.unsplash.com/photo-15193886887-2b8cf8cf77b78e1a7c4ed05773d0d"
+
+        # Último recurso: imagen genérica de tecnología (no aleatoria)
+        return 'https://images.unsplash.com/photo-15193886887-2b8cf8cf77b78e1a7c4ed05773d0d'
     
     def _identify_product_type(self, product_name: str) -> str:
         """Identifica el tipo de producto"""

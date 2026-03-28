@@ -13,7 +13,7 @@ import json
 import time
 from bs4 import BeautifulSoup
 
-from config.settings import Config
+from config import settings
 
 class AffiliateInserter:
     """Gestiona la inserción de links de afiliado de Amazon"""
@@ -22,11 +22,12 @@ class AffiliateInserter:
         """Inicializa el inseridor de afiliados"""
         self.logger = logging.getLogger(__name__)
         
-        # Partner Tag configurado
-        self.partner_tag = "techblog20209-21"
-        
-        # Configuración Amazon España
-        self.amazon_base_url = "https://www.amazon.es"
+        # Partner Tag configurado (desde settings)
+        self.partner_tag = getattr(settings, 'AMAZON_PARTNER_TAG', 'techblog20209-21')
+
+        # Configuración Amazon (tomada desde settings)
+        marketplace = getattr(settings, 'AMAZON_MARKETPLACE', 'www.amazon.es')
+        self.amazon_base_url = f"https://{marketplace}"
         
         # User-Agent para evitar bloqueos
         self.headers = {
@@ -62,6 +63,11 @@ class AffiliateInserter:
     def insert_affiliate_links(self, article_data: Dict[str, Any]) -> Dict[str, Any]:
         """Inserta links de afiliado de Amazon en el contenido"""
         try:
+            # Si la inserción de afiliados está deshabilitada, no hacemos nada
+            if not getattr(settings, 'AFFILIATE_ENABLED', True):
+                self.logger.info("Affiliate links disabled in settings; skipping insertion")
+                return article_data
+
             content = article_data.get('content', '')
             main_keyword = article_data.get('main_keyword', '')
             

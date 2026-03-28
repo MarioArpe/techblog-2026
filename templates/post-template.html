@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title} - TechBlog</title>
     <meta name="description" content="{description}">
+        <!-- Open Graph / Social -->
+        <meta property="og:title" content="{title} - TechBlog">
+        <meta property="og:description" content="{description}">
+        <meta property="og:image" content="{featured_image}">
+        <meta property="og:type" content="article">
+        <meta property="og:locale" content="es_ES">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{title} - TechBlog">
+        <meta name="twitter:description" content="{description}">
+        <meta name="twitter:image" content="{featured_image}">
+        <meta name="theme-color" content="#FF6B00">
+
+        <!-- JSON-LD structured data -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": "{title}",
+            "description": "{description}",
+            "image": "{featured_image}",
+            "author": { "@type": "Organization", "name": "TechBlog" },
+            "datePublished": "{date}",
+            "publisher": { "@type": "Organization", "name": "TechBlog" }
+        }
+        </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -439,6 +464,13 @@
                 <span><i class="far fa-clock"></i> {reading_time} min de lectura</span>
                 <span><i class="far fa-user"></i> TechBlog Team</span>
             </div>
+            <div class="share-buttons" aria-label="Compartir artículo">
+                <button class="share-btn" data-action="share" title="Compartir"><i class="fas fa-share-alt"></i></button>
+                <button class="share-btn" data-action="twitter" title="Compartir en Twitter"><i class="fab fa-twitter"></i></button>
+                <button class="share-btn" data-action="facebook" title="Compartir en Facebook"><i class="fab fa-facebook-f"></i></button>
+                <button class="share-btn" data-action="whatsapp" title="Compartir en WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                <button class="share-btn" data-action="copy" title="Copiar enlace"><i class="fas fa-link"></i></button>
+            </div>
             <div class="article-stats">
                 <div class="stat-item">
                     <span class="stat-number">{viewers_count}</span>
@@ -528,7 +560,7 @@
                     ⏰ <strong>¡OFERTAS POR TIEMPO LIMITADO!</strong> {cta_text}
                 </p>
                 <div style="margin-top: 3rem;">
-                    <a href="{main_affiliate_link}" class="final-cta" target="_blank">
+                    <a href="{main_affiliate_link}" class="final-cta cta-button" target="_blank" rel="noopener noreferrer">
                         🛒 VER TODAS LAS OFERTAS EN AMAZON
                     </a>
                 </div>

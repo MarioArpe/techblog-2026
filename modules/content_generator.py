@@ -42,11 +42,25 @@ class ContentGenerator:
             # Identificar tipo de contenido
             content_type = self._identify_content_type(main_keyword)
             
+            # Obtener imagen destacada real del producto
+            featured_image = self._get_featured_image(main_keyword)
+
+            # Productos principales según tipo (para imágenes de cada producto)
+            product_names = self._get_product_list(main_keyword, content_type)
+            product_images = {name: self._get_product_image(name) for name in product_names}
+
             # Generar contenido basado en el tipo
             if content_type in self.templates:
                 content = self.templates[content_type].format(
                     main_keyword=main_keyword,
-                    secondary_keywords=secondary_keywords or []
+                    featured_image=featured_image,
+                    secondary_keywords=secondary_keywords or [],
+                    product1_name=product_names[0] if len(product_names) > 0 else main_keyword,
+                    product2_name=product_names[1] if len(product_names) > 1 else '',
+                    product3_name=product_names[2] if len(product_names) > 2 else '',
+                    product1_image=product_images.get(product_names[0], featured_image) if len(product_names) > 0 else featured_image,
+                    product2_image=product_images.get(product_names[1], featured_image) if len(product_names) > 1 else featured_image,
+                    product3_image=product_images.get(product_names[2], featured_image) if len(product_names) > 2 else featured_image
                 )
             else:
                 content = self._generate_generic_content(main_keyword, secondary_keywords)
@@ -58,7 +72,7 @@ class ContentGenerator:
                 'main_keyword': main_keyword,
                 'secondary_keywords': secondary_keywords,
                 'content_type': content_type,
-                'featured_image': self._get_featured_image(main_keyword),
+                'featured_image': featured_image,
                 'generated_at': datetime.now().isoformat(),
                 'word_count': len(content.split())
             }
@@ -107,6 +121,44 @@ class ContentGenerator:
         
         return f"{prefix} {keyword.title()}{suffix}"
     
+    def _get_product_list(self, main_keyword: str, content_type: str) -> List[str]:
+        """Devuelve lista de productos específicos según el contenido"""
+        if content_type == 'laptop':
+            return [
+                main_keyword,
+                'HP Pavilion Aero 13',
+                'ASUS VivoBook 15'
+            ]
+        elif content_type == 'smartphone':
+            return [
+                'iPhone 15 Pro',
+                'Samsung Galaxy S24',
+                'Google Pixel 8'
+            ]
+        elif content_type == 'tablet':
+            return [
+                'iPad Pro 12.9',
+                'Samsung Galaxy Tab S9',
+                'Surface Pro 9'
+            ]
+        elif content_type == 'gadget':
+            return [
+                'Sony WH-1000XM5',
+                'Bose QuietComfort 45',
+                'JBL Flip 6'
+            ]
+        else:
+            # Fallback: usar solo main_keyword y dos genéricos
+            return [main_keyword, 'Lenovo IdeaPad Slim 3', 'iPhone 15 Pro']
+
+    def _get_product_image(self, product_name: str) -> str:
+        """Busca URL de imagen real para un producto"""
+        image_url = search_real_product_image(product_name)
+        if image_url:
+            return image_url
+        # fallback a una imagen genérica construida añadiendo keyword
+        return f"https://images.unsplash.com/photo-15193886887-2b8cf8cf77b78e1a7c4ed05773d0d"
+
     def _get_featured_image(self, keyword: str) -> str:
         """Obtiene imagen destacada real del producto"""
         # Buscar imagen real del producto
@@ -118,8 +170,8 @@ class ContentGenerator:
             if product_name:
                 return search_real_product_image(product_name)
         
-        # Imagen genérica si no se encuentra específica
-        return f"https://images.unsplash.com/photo-15193886887-2b8cf8cf77b78e1a7c4ed05773d0d?random={random.randint(1, 1000)}"
+        # Si no se encuentra imagen específica, usar la búsqueda general de producto (no aleatoria)
+        return search_real_product_image(keyword)
     
     def _extract_product_name(self, keyword: str) -> str:
         """Extrae nombre específico del producto del keyword"""
@@ -153,14 +205,10 @@ class ContentGenerator:
         keyword_lower = keyword.lower()
         
         # Buscar en el mapeo
-        for content_type, products in product_mapping.items():
-            if content_type == content_type:
-                for brand, name in products.items():
-                    if brand.lower() in keyword_lower:
-                        return name
-        
-        # Si no encuentra, devolver el keyword original
-        return keyword.title()
+        for _, products in product_mapping.items():
+            for brand, name in products.items():
+                if brand.lower() in keyword_lower:
+                    return name
     
     def _get_laptop_template(self) -> str:
         """Template para artículos de laptops"""
@@ -171,10 +219,10 @@ class ContentGenerator:
 
 Hemos analizado durante semanas los mejores portátiles del mercado. Aquí te presentamos nuestra selección top 3 con imágenes reales y especificaciones detalladas.
 
-### 🥇 1. {main_keyword} - TOP VENTAS
+### 🥇 1. {product1_name} - TOP VENTAS
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="{main_keyword}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product1_image}" alt="{product1_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -188,10 +236,10 @@ Hemos analizado durante semanas los mejores portátiles del mercado. Aquí te pr
 
 **Ideal para**: Estudiantes y profesionales que buscan portabilidad sin sacrificar rendimiento.
 
-### 🥈 2. HP Pavilion Aero 13 - MEJOR PRECIO
+### 🥈 2. {product2_name} - MEJOR PRECIO
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="HP Pavilion Aero 13" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product2_image}" alt="{product2_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -205,10 +253,10 @@ Hemos analizado durante semanas los mejores portátiles del mercado. Aquí te pr
 
 **Ideal para**: Profesionales que viajan frecuentemente y necesitan máxima potencia en formato compacto.
 
-### 🥉 3. ASUS VivoBook 15 - MEJOR RELACIÓN
+### 🥉 3. {product3_name} - MEJOR RELACIÓN
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="ASUS VivoBook 15" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product3_image}" alt="{product3_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -272,10 +320,10 @@ Después de semanas de análisis intensivo, estos son los mejores portátiles de
 
 Análisis completo de los mejores smartphones del mercado con imágenes reales y especificaciones técnicas.
 
-### 🥇 1. iPhone 15 Pro - PREMIUM
+### 🥇 1. {product1_name} - PREMIUM
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="iPhone 15 Pro" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product1_image}" alt="{product1_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -286,10 +334,10 @@ Análisis completo de los mejores smartphones del mercado con imágenes reales y
 - **Cámaras**: 48MP + 12MP Ultra Wide
 - **Batería**: Hasta 29 horas de reproducción de video
 
-### 🥈 2. Samsung Galaxy S24 - MEJOR ANDROID
+### 🥈 2. {product2_name} - MEJOR ANDROID
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Samsung Galaxy S24" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product2_image}" alt="{product2_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -300,10 +348,10 @@ Análisis completo de los mejores smartphones del mercado con imágenes reales y
 - **Cámaras**: 50MP + 10MP
 - **Batería**: Hasta 36 horas
 
-### 🥉 3. Google Pixel 8 - MEJOR PRECIO
+### 🥉 3. {product3_name} - MEJOR PRECIO
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Google Pixel 8" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product3_image}" alt="{product3_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -359,10 +407,10 @@ El mercado de smartphones de 2026 ofrece opciones excelentes para cada presupues
 
 Guía completa de las mejores tablets con imágenes reales y análisis detallado.
 
-### 🥇 1. iPad Pro 12.9 - PREMIUM
+### 🥇 1. {product1_name} - PREMIUM
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="iPad Pro 12.9" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product1_image}" alt="{product1_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -372,10 +420,10 @@ Guía completa de las mejores tablets con imágenes reales y análisis detallado
 - **Cámaras**: 12MP + 8MP
 - **Batería**: Hasta 10 horas
 
-### 🥈 2. Samsung Galaxy Tab S9 - MEJOR ANDROID
+### 🥈 2. {product2_name} - VERSATIL
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Samsung Galaxy Tab S9" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product2_image}" alt="{product2_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -385,10 +433,10 @@ Guía completa de las mejores tablets con imágenes reales y análisis detallado
 - **Cámaras**: 13MP + 8MP
 - **Batería**: Hasta 20 horas
 
-### 🥉 3. Surface Pro 9 - MEJOR PARA TRABAJO
+### 🥉 3. {product3_name} - MEJOR PARA TRABAJO
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Surface Pro 9" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product3_image}" alt="{product3_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -442,10 +490,10 @@ La elección de tablet depende del uso principal. Para creatividad, el **iPad Pr
 
 Descubre los gadgets más innovadores del año con análisis expertos y recomendaciones.
 
-### 🥇 1. Sony WH-1000XM5 - MEJORES AURICULARES
+### 🥇 1. {product1_name} - MEJORES AURICULARES
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Sony WH-1000XM5" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product1_image}" alt="{product1_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -454,10 +502,10 @@ Descubre los gadgets más innovadores del año con análisis expertos y recomend
 - **Batería**: 40 horas
 - **Conectividad**: Bluetooth 5.3, NFC, USB-C
 
-### 🥈 2. Bose QuietComfort 45 - MEJOR CALIDAD-PRECIO
+### 🥈 2. {product2_name} - MEJOR CALIDAD-PRECIO
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="Bose QuietComfort 45" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product2_image}" alt="{product2_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
@@ -465,10 +513,10 @@ Descubre los gadgets más innovadores del año con análisis expertos y recomend
 - **Batería**: 24 horas
 - **Conectividad**: Bluetooth 5.1, AUX, USB-C
 
-### 🥉 3. JBL Flip 6 - MEJOR PORTÁTILES
+### 🥉 3. {product3_name} - MEJOR PORTÁTILES
 
 <div style="text-align: center; margin: 30px 0;">
-<img src="{featured_image}" alt="JBL Flip 6" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+<img src="{product3_image}" alt="{product3_name}" style="max-width: 100%; height: auto; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
 </div>
 
 **Características principales:**
